@@ -60,4 +60,34 @@ This enables **lazy migration** — when a document is read, check `_schemaVersi
 
 ---
 
+## `faultReports` collection
+
+**Path:** `/faultReports/{reportId}`  
+**Access:** Owner-only. A signed-in user can create and read only their own reports. The only permitted update changes `status` from `open` to `resolved`. Hard deletes are denied.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `uid` | `string` | Yes | Firebase Auth UID of the report owner |
+| `title` | `string` | Yes | Fault title containing 3–80 characters |
+| `category` | `'connection' \| 'speed' \| 'equipment' \| 'billing'` | Yes | Fault category; immutable after creation |
+| `description` | `string` | Yes | Fault description containing 10–500 characters |
+| `status` | `'open' \| 'resolved'` | Yes | Set to `open` on creation and may only transition to `resolved` |
+| `createdAt` | `Timestamp` | Yes | Creation timestamp; immutable |
+| `deletedAt` | `Timestamp \| null` | Yes | Soft-delete marker; set to `null` on creation |
+| `_schemaVersion` | `1` | Yes | Schema version |
+
+**Creation:** The Server Action takes `uid` from the authenticated session, sets `status` to `open`, sets `deletedAt` to `null`, and ignores client-supplied ownership or status values.
+
+**Resolution:** Only the owner can resolve their report. Resolution only changes `status` from `open` to `resolved`.
+
+**Listing:** The live query filters by `uid`, filters `deletedAt == null`, and orders by `createdAt` descending.
+
+**Required composite index:**
+
+- `deletedAt` — Ascending
+- `uid` — Ascending
+- `createdAt` — Descending
+
+---
+
 <!-- Add new collection schemas below -->

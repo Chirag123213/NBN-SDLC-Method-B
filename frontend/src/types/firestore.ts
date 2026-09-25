@@ -31,3 +31,19 @@ export interface Note {
   updatedAt: Timestamp
   _schemaVersion: 1
 }
+
+export type FaultReportCategory = 'connection' | 'speed' | 'equipment' | 'billing'
+
+export type FaultReportStatus = 'open' | 'resolved'
+
+export interface FaultReport {
+  id: string
+  _schemaVersion: 1
+  uid: string
+  title: string
+  category: FaultReportCategory
+  description: string
+  status: FaultReportStatus
+  createdAt: Timestamp
+  deletedAt: Timestamp | null
+}
